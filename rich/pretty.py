@@ -569,12 +569,13 @@ def _is_namedtuple(obj: Any) -> bool:
     Returns:
         bool: True if the object is a namedtuple. False otherwise.
     """
-    try:
-        fields = getattr(obj, "_fields", None)
-    except Exception:
-        # Being very defensive - if we cannot get the attr then its not a namedtuple
-        return False
-    return isinstance(obj, tuple) and isinstance(fields, tuple)
+    # A namedtuple is a subclass of a tuple that has a `_fields` attribute
+    # on the class. We check the class __dict__ to avoid triggering __getattr__
+    # on the instance, which would be a side effect of pretty printing.
+    # https://github.com/Textualize/rich/issues/4183
+    return isinstance(obj, tuple) and "_fields" in getattr(
+        type(obj), "__dict__", {}
+    ) and isinstance(getattr(obj, "_fields", None), tuple)
 
 
 def traverse(
@@ -646,12 +647,17 @@ def traverse(
                 else:
                     yield arg
 
+        _sentinel = "awehoi234_wdfjwljet234_234wdfoijsdfmmnxpi492"
         try:
-            fake_attributes = hasattr(
-                obj, "awehoi234_wdfjwljet234_234wdfoijsdfmmnxpi492"
-            )
+            fake_attributes = hasattr(obj, _sentinel)
         except Exception:
             fake_attributes = False
+        finally:
+            # Ensure we don't leave behind a sentinel attribute on the object
+            try:
+                delattr(obj, _sentinel)
+            except Exception:
+                pass
 
         rich_repr_result: Optional[RichReprResult] = None
         if not fake_attributes:
