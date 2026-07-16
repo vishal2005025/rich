@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo "ARGS: $@" >&2
-
 set -e
 
 OUTPUT_PATH=""
@@ -23,19 +21,21 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-if [ -z "$OUTPUT_PATH" ] || [ -z "$MODE" ]; then
-    echo "Usage: test.sh --output_path <output.xml> base|new" >&2
+if [ -z "$MODE" ]; then
+    echo "Usage: test.sh [--output_path output.xml] base|new" >&2
     exit 1
 fi
 
+PYTEST_ARGS="tests/test_pretty.py"
+
 if [ "$MODE" = "base" ]; then
-    exec python -m pytest \
-        tests/test_pretty.py \
-        -k "not (test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object)" \
-        --junitxml="$OUTPUT_PATH"
+    PYTEST_ARGS="$PYTEST_ARGS -k not (test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object)"
 else
-    exec python -m pytest \
-        tests/test_pretty.py \
-        -k "test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object" \
-        --junitxml="$OUTPUT_PATH"
+    PYTEST_ARGS="$PYTEST_ARGS -k test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object"
+fi
+
+if [ -n "$OUTPUT_PATH" ]; then
+    exec python -m pytest $PYTEST_ARGS --junitxml="$OUTPUT_PATH"
+else
+    exec python -m pytest $PYTEST_ARGS
 fi
