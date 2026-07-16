@@ -705,7 +705,7 @@ def test_lying_attribute() -> None:
     assert "Foo" in result
 
 
-def test_pretty_repr_does_not_mutate_tuple_subclass():
+def test_pretty_repr_does_not_mutate_tuple_subclass() -> None:
     class TupleAuto(tuple):
         def __getattr__(self, name):
             setattr(self, name, ())
@@ -723,7 +723,7 @@ def test_pretty_repr_does_not_mutate_tuple_subclass():
     assert "_fields" not in obj.__dict__
 
 
-def test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object():
+def test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object() -> None:
     class AutoVivify:
         def __init__(self):
             self.created = []
