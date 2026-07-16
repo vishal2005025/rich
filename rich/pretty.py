@@ -576,6 +576,12 @@ def _is_namedtuple(obj: Any) -> bool:
     return isinstance(obj, tuple) and "_fields" in getattr(
         type(obj), "__dict__", {}
     ) and isinstance(getattr(obj, "_fields", None), tuple)
+    try:
+        fields = getattr(obj, "_fields", None)
+    except Exception:
+        # Being very defensive - if we cannot get the attr then its not a namedtuple
+        return False
+    return isinstance(obj, tuple) and isinstance(fields, tuple)
 
 
 def traverse(
@@ -650,6 +656,9 @@ def traverse(
         _sentinel = "awehoi234_wdfjwljet234_234wdfoijsdfmmnxpi492"
         try:
             fake_attributes = hasattr(obj, _sentinel)
+            fake_attributes = hasattr(
+                obj, "awehoi234_wdfjwljet234_234wdfoijsdfmmnxpi492"
+            )
         except Exception:
             fake_attributes = False
         finally:
