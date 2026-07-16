@@ -742,7 +742,7 @@ def test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object():
         not in obj.__dict__
     )
 
-    assert "_fields" not in obj.__dict__    
+    assert "_fields" not in obj.__dict__
 
 
 def test_measure_pretty() -> None:
