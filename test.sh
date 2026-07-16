@@ -26,16 +26,22 @@ if [ -z "$MODE" ]; then
     exit 1
 fi
 
-PYTEST_ARGS="tests/test_pretty.py"
-
 if [ "$MODE" = "base" ]; then
-    PYTEST_ARGS="$PYTEST_ARGS -k not (test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object)"
+    if [ -n "$OUTPUT_PATH" ]; then
+        exec python -m pytest tests/test_pretty.py \
+            -k "not (test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object)" \
+            --junitxml="$OUTPUT_PATH"
+    else
+        exec python -m pytest tests/test_pretty.py \
+            -k "not (test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object)"
+    fi
 else
-    PYTEST_ARGS="$PYTEST_ARGS -k test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object"
-fi
-
-if [ -n "$OUTPUT_PATH" ]; then
-    exec python -m pytest $PYTEST_ARGS --junitxml="$OUTPUT_PATH"
-else
-    exec python -m pytest $PYTEST_ARGS
+    if [ -n "$OUTPUT_PATH" ]; then
+        exec python -m pytest tests/test_pretty.py \
+            -k "test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object" \
+            --junitxml="$OUTPUT_PATH"
+    else
+        exec python -m pytest tests/test_pretty.py \
+            -k "test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object"
+    fi
 fi
