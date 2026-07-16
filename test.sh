@@ -6,14 +6,16 @@ fi
 
 case "$3" in
     base)
-        exec poetry run pytest tests/test_pretty.py -vv --junitxml="$2" \
-            --deselect=tests/test_pretty.py::test_pretty_repr_does_not_mutate_tuple_subclass \
-            --deselect=tests/test_pretty.py::test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object
+        exec python -m poetry run pytest \
+            tests/test_pretty.py \
+            -k "not (test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object)" \
+            --junitxml="$2"
         ;;
     new)
-        exec poetry run pytest -vv --junitxml="$2" \
-            tests/test_pretty.py::test_pretty_repr_does_not_mutate_tuple_subclass \
-            tests/test_pretty.py::test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object
+        exec python -m poetry run pytest \
+            tests/test_pretty.py \
+            -k "test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object" \
+            --junitxml="$2"
         ;;
     *)
         exit 2
