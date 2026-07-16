@@ -712,15 +712,11 @@ def test_pretty_repr_does_not_mutate_tuple_subclass() -> None:
             return getattr(self, name)
 
     obj = TupleAuto()
+    before = dict(obj.__dict__)
 
     pretty_repr(obj)
 
-    assert (
-        "awehoi234_wdfjwljet234_234wdfoijsdfmmnxpi492"
-        not in obj.__dict__
-    )
-
-    assert "_fields" not in obj.__dict__
+    assert obj.__dict__ == before
 
 
 def test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object() -> None:
@@ -734,15 +730,11 @@ def test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object() 
             return getattr(self, name)
 
     obj = AutoVivify()
+    before = dict(obj.__dict__)
 
     pretty_repr(obj)
 
-    assert (
-        "awehoi234_wdfjwljet234_234wdfoijsdfmmnxpi492"
-        not in obj.__dict__
-    )
-
-    assert "_fields" not in obj.__dict__
+    assert obj.__dict__ == before
 
 
 def test_measure_pretty() -> None:
