@@ -8,13 +8,13 @@ fi
 
 case "$3" in
     base)
-        exec poetry run pytest \
+        exec python -m pytest \
             tests/test_pretty.py \
             -k "not (test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object)" \
             --junitxml="$2"
         ;;
     new)
-        exec poetry run pytest \
+        exec python -m pytest \
             tests/test_pretty.py \
             -k "test_pretty_repr_does_not_mutate_tuple_subclass or test_pretty_repr_does_not_leave_probe_attributes_on_auto_vivifying_object" \
             --junitxml="$2"
