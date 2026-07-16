@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "ARGS: $@" >&2
+
 set -e
 
 OUTPUT_PATH=""
